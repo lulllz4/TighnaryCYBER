@@ -581,7 +581,6 @@ const PH={state:"off",charge:0,img:null};
   PH.updCable();
   PH.light=new T.PointLight(C("#9ff5d6"),0,.6,2); PH.light.position.set(0,.06,0); g.add(PH.light);
   PH.holoT=dyn(256,340,(c,w,h)=>{ c.fillStyle="#000"; c.fillRect(0,0,w,h);
-  PH.holoT=dyn(256,340,(c,w,h)=>{ c.fillStyle="#000"; c.fillRect(0,0,w,h);
     const label=String(A.useLabel||A.use||"НЕТ СИГНАЛА");
     c.strokeStyle="#9ff5d6"; c.lineWidth=2; c.strokeRect(14,14,w-28,h-28);
     c.fillStyle="#9ff5d6"; c.textAlign="center"; c.textBaseline="middle";
@@ -933,8 +932,6 @@ const RENDER={
     if(A.use){ a.href=A.use; a.textContent=A.useLabel||A.use; }
     else { a.removeAttribute("href"); a.textContent="НЕТ СИГНАЛА"; $(".hl-s",b).textContent="Юз ещё не загружен."; }
     if(A.useCaption) paras(A.useCaption,cap); },
-    const empty=()=>{ h.innerHTML='<div class="holo-empty"><b>НЕТ СИГНАЛА</b><span>Юз ещё не загружен.</span></div>'; };
-    if(A.use){ const img=new Image(); img.alt="Юз"; img.onerror=empty; img.src=A.use; h.appendChild(img); } else empty(); if(A.useCaption) paras(A.useCaption,cap); },
   final(b){ const n=document.createElement("div"); n.className="note"; paras(A.finalNote||"[Текст записки]",n); b.appendChild(n); }
 };
 const modal=$("#modal"), mBody=$("#mBody"), mTitle=$("#mTitle"), mKick=$("#mKicker");
