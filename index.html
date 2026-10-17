@@ -178,6 +178,11 @@ button{font:inherit;color:inherit}
 .holo-empty b{font-family:var(--f-head);font-weight:300;font-size:20px;letter-spacing:.24em;color:var(--mint)}
 .holo-empty span{font-size:12px;color:var(--dim)}
 .holo-cap{margin-top:14px;font-size:13px;color:var(--dim);text-align:center;max-width:46ch}
+.holo-link{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
+.hl-k{font-size:11px;letter-spacing:.32em;color:var(--dim)}
+.hl-a{font-family:var(--f-head);font-weight:300;font-size:clamp(22px,6vw,32px);letter-spacing:.12em;color:var(--mint);text-decoration:none;border:1px solid var(--mint-d);padding:14px 20px;word-break:break-all;text-shadow:0 0 12px rgba(159,245,214,.5);transition:border-color .25s,box-shadow .25s,color .25s}
+.hl-a[href]:hover{color:#e7fff6;border-color:var(--mint);box-shadow:0 0 24px rgba(159,245,214,.2),inset 0 0 16px rgba(159,245,214,.08)}
+.hl-s{font-size:12px;color:var(--dim)}
 .note{max-width:440px;margin:8px auto 0;padding:30px 30px 34px;color:#121614;font-family:var(--f-hand);font-size:27px;line-height:1.3;transform:rotate(-1.4deg);background-color:#8f9a8f;background-image:linear-gradient(180deg,transparent 49%,rgba(0,0,0,.14) 50%,transparent 51%),radial-gradient(ellipse at 80% 20%,rgba(80,10,40,.28),transparent 35%),radial-gradient(ellipse at 15% 85%,rgba(20,30,15,.35),transparent 40%);box-shadow:inset 0 0 50px rgba(10,25,20,.5),0 18px 36px rgba(0,0,0,.8)}
 .note p{margin:0 0 .6em}
 .note p.phd{color:#3f4a46}
@@ -256,7 +261,8 @@ window.ANKETA = {
 
   //юз
   use: "https://t.me/SHHIMME",
-  useCaption: "юзик",
+  useLabel: "@SHHIMME",                 // текст, который видно на голограмме и в окне
+  useCaption: "Юз",
 
   // записка финал
   finalNote: "«Всякая зависимость возникает из-за подсознательного нежелания человека встретиться с болью лицом к лицу и пройти её до конца. Зависимость начинается с боли и болью же заканчивается»",
@@ -575,12 +581,19 @@ const PH={state:"off",charge:0,img:null};
   PH.updCable();
   PH.light=new T.PointLight(C("#9ff5d6"),0,.6,2); PH.light.position.set(0,.06,0); g.add(PH.light);
   PH.holoT=dyn(256,340,(c,w,h)=>{ c.fillStyle="#000"; c.fillRect(0,0,w,h);
-    if(PH.img){ const im=PH.img, ir=im.width/im.height, cr=w/h; let sw=im.width,sh=im.height,sx=0,sy=0; if(ir>cr){ sw=sh*cr; sx=(im.width-sw)/2; } else { sh=sw/cr; sy=(im.height-sh)/2; } c.drawImage(im,sx,sy,sw,sh,0,0,w,h); c.globalCompositeOperation="multiply"; c.fillStyle="#a8ffdc"; c.fillRect(0,0,w,h); c.globalCompositeOperation="source-over"; }
-    else { c.strokeStyle="#9ff5d6"; c.lineWidth=2; c.beginPath(); c.arc(w/2,h*.36,46,0,7); c.stroke(); c.beginPath(); c.moveTo(w/2-80,h*.86); c.quadraticCurveTo(w/2,h*.5,w/2+80,h*.86); c.stroke(); c.fillStyle="#9ff5d6"; c.font="300 22px Oswald,sans-serif"; c.textAlign="center"; c.fillText("НЕТ СИГНАЛА",w/2,h*.96); }
+  PH.holoT=dyn(256,340,(c,w,h)=>{ c.fillStyle="#000"; c.fillRect(0,0,w,h);
+    const label=String(A.useLabel||A.use||"НЕТ СИГНАЛА");
+    c.strokeStyle="#9ff5d6"; c.lineWidth=2; c.strokeRect(14,14,w-28,h-28);
+    c.fillStyle="#9ff5d6"; c.textAlign="center"; c.textBaseline="middle";
+    // значок «самолётик»
+    c.beginPath(); c.moveTo(w/2-30,h*.30); c.lineTo(w/2+32,h*.20); c.lineTo(w/2+14,h*.40); c.lineTo(w/2-4,h*.33); c.closePath(); c.stroke();
+    c.font="300 16px Oswald,sans-serif"; c.fillText("ВХОДЯЩИЙ КОНТАКТ",w/2,h*.50);
+    let fs=34; c.font="400 "+fs+"px Oswald,sans-serif"; while(c.measureText(label).width>w-40&&fs>12){ fs--; c.font="400 "+fs+"px Oswald,sans-serif"; }
+    c.shadowColor="#9ff5d6"; c.shadowBlur=14; c.fillText(label,w/2,h*.64); c.shadowBlur=0;
+    if(A.useCaption){ c.font="13px 'IBM Plex Mono',monospace"; c.globalAlpha=.7; c.fillText(String(A.useCaption),w/2,h*.78); c.globalAlpha=1; }
     c.fillStyle="rgba(0,0,0,.5)"; for(let y=0;y<h;y+=4) c.fillRect(0,y,w,2); },true);
   PH.holo=new T.Mesh(new T.PlaneGeometry(.12,.16),new T.MeshBasicMaterial({map:PH.holoT,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide,color:new T.Color(1.4,1.4,1.4)}));
   PH.holo.position.set(-.6,.14,.07); PH.holo.visible=false; scene.add(PH.holo);
-  if(A.use){ const im=new Image(); im.onload=()=>{ PH.img=im; PH.holoT.upd(); }; im.src=A.use; }
 })();
 const BA={void:false};
 function drawBadge(c,w,h){ c.fillStyle="#8e9893"; c.fillRect(0,0,w,h); c.fillStyle="#0c2a20"; c.fillRect(0,0,w,68);
@@ -915,7 +928,11 @@ const RENDER={
     const page=$(".jpage",b),txt=$(".p-text",b),num=$(".p-num",b),info=$(".jnav span",b),prev=$("[data-p]",b),next=$("[data-n]",b);
     function show(anim){ txt.innerHTML=""; paras(list[i],txt); num.textContent="стр. "+(i+1); info.textContent=(i+1)+" из "+list.length; prev.disabled=i===0; next.disabled=i===list.length-1; if(anim){ page.classList.remove("turn"); void page.offsetWidth; page.classList.add("turn"); AU.hiss(.2,2500,.03,"highpass"); } }
     prev.addEventListener("click",()=>{ if(i>0){ i--; show(true); } }); next.addEventListener("click",()=>{ if(i<list.length-1){ i++; show(true); } }); show(false); },
-  phone(b){ b.innerHTML='<div class="holo-wrap"><div class="holo"></div><div class="holo-cap"></div></div>'; const h=$(".holo",b), cap=$(".holo-cap",b);
+  phone(b){ b.innerHTML='<div class="holo-wrap"><div class="holo"><div class="holo-link"><span class="hl-k">ВХОДЯЩИЙ КОНТАКТ</span><a class="hl-a" target="_blank" rel="noopener noreferrer"></a><span class="hl-s">нажми, чтобы перейти</span></div></div><div class="holo-cap"></div></div>';
+    const a=$(".hl-a",b), cap=$(".holo-cap",b);
+    if(A.use){ a.href=A.use; a.textContent=A.useLabel||A.use; }
+    else { a.removeAttribute("href"); a.textContent="НЕТ СИГНАЛА"; $(".hl-s",b).textContent="Юз ещё не загружен."; }
+    if(A.useCaption) paras(A.useCaption,cap); },
     const empty=()=>{ h.innerHTML='<div class="holo-empty"><b>НЕТ СИГНАЛА</b><span>Юз ещё не загружен.</span></div>'; };
     if(A.use){ const img=new Image(); img.alt="Юз"; img.onerror=empty; img.src=A.use; h.appendChild(img); } else empty(); if(A.useCaption) paras(A.useCaption,cap); },
   final(b){ const n=document.createElement("div"); n.className="note"; paras(A.finalNote||"[Текст записки]",n); b.appendChild(n); }
